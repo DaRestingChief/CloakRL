@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# IDEs
+.vscode/
+.idea/
+
+# Stable Baselines / Logs
+logs/
+models/
+*.zip
