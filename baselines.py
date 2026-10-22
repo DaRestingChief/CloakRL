@@ -38,14 +38,15 @@ def evaluate_baseline(policy_fn, episodes=100):
         
     return np.mean(total_rewards), np.mean(budgets_left)
 
-if _name_ == "_main_":
-    baselines = {
-        "Always Exact": always_exact_policy,
-        "Always City": always_city_policy,
-        "Always Refuse": always_refuse_policy,
-        "Random": random_policy,
-    }
-    
+
+baselines = {
+    "Always Exact": always_exact_policy,
+    "Always City": always_city_policy,
+    "Always Refuse": always_refuse_policy,
+    "Random": random_policy,
+}
+
+if __name__ == "__main__":
     print("Evaluating Baselines over 100 episodes:")
     for name, policy in baselines.items():
         avg_reward, avg_budget = evaluate_baseline(policy)
