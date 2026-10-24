@@ -2,6 +2,7 @@
 import csv
 import os
 
+import numpy as np
 from stable_baselines3 import DQN, PPO
 
 from privacy_env import PrivacyEnv
@@ -14,13 +15,12 @@ TEST_SEED = 90000
 RANDOM_POLICY_SEED = 120000
 
 
-def evaluate_policy(policy_name, policy_fn, episodes, writer, training_seed="baseline"):
+def evaluate_policy(policy_name, policy_fn, writer, training_seed="baseline"):
     env = PrivacyEnv()
 
-    for episode in range(episodes):
+    for episode in range(TEST_EPISODES):
         obs, _ = env.reset(seed=TEST_SEED + episode)
-        rng_seed = RANDOM_POLICY_SEED + episode
-        episode_rng = __import__("numpy").random.default_rng(rng_seed)
+        episode_rng = np.random.default_rng(RANDOM_POLICY_SEED + episode)
 
         episode_return = 0.0
         service_utility = 0.0
@@ -83,9 +83,8 @@ def evaluate_model(algorithm, seed, writer):
         return int(action)
 
     evaluate_policy(
-        algorithm,
+        f"{algorithm}_seed{seed}",
         policy_fn,
-        TEST_EPISODES,
         writer,
         training_seed=seed,
     )
@@ -115,7 +114,7 @@ def main():
         writer.writeheader()
 
         for name, policy in baselines.items():
-            evaluate_policy(name, policy, TEST_EPISODES, writer)
+            evaluate_policy(name, policy, writer)
 
         for algorithm in ["DQN", "PPO"]:
             for seed in SEEDS:
