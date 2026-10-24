@@ -15,8 +15,10 @@ def always_refuse_policy(obs):
     return 2
 
 
-def random_policy(obs):
-    return int(np.random.choice([0, 1, 2]))
+def random_policy(obs, rng=None):
+    if rng is None:
+        rng = np.random.default_rng()
+    return int(rng.choice([0, 1, 2]))
 
 
 def threshold_policy(obs, tau=0.7):
@@ -39,11 +41,16 @@ def evaluate_baseline(policy_fn, episodes=100, seed=0):
 
     for episode in range(episodes):
         obs, _ = env.reset(seed=seed + episode)
+        rng = np.random.default_rng(seed + episode)
         episode_reward = 0.0
         done = False
 
         while not done:
-            action = policy_fn(obs)
+            if policy_fn is random_policy:
+                action = policy_fn(obs, rng)
+            else:
+                action = policy_fn(obs)
+
             obs, reward, terminated, truncated, info = env.step(action)
             episode_reward += reward
             done = terminated or truncated
@@ -51,6 +58,7 @@ def evaluate_baseline(policy_fn, episodes=100, seed=0):
         total_rewards.append(episode_reward)
         budgets_left.append(info["remaining_budget"])
 
+    env.close()
     return float(np.mean(total_rewards)), float(np.mean(budgets_left))
 
 

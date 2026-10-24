@@ -1,4 +1,6 @@
 gymnasium==0.29.1
 numpy
 stable-baselines3[extra]
+torch
 matplotlib
+pandas
