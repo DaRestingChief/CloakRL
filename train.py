@@ -1,3 +1,4 @@
+
 import os
 import random
 
@@ -15,8 +16,13 @@ TOTAL_TIMESTEPS = 30000
 
 
 def train_model(algorithm, seed):
-    os.makedirs("models", exist_ok=True)
-    os.makedirs(f"logs/{algorithm.lower()}", exist_ok=True)
+    model_dir = "models"
+    log_dir = f"logs/{algorithm.lower()}/seed{seed}"
+    best_dir = f"{model_dir}/{algorithm.lower()}_seed{seed}_best"
+
+    os.makedirs(model_dir, exist_ok=True)
+    os.makedirs(log_dir, exist_ok=True)
+    os.makedirs(best_dir, exist_ok=True)
 
     random.seed(seed)
     np.random.seed(seed)
@@ -30,12 +36,12 @@ def train_model(algorithm, seed):
 
     eval_callback = EvalCallback(
         eval_env,
-        best_model_save_path=f"models/{algorithm.lower()}_seed{seed}_best",
-        log_path=f"logs/{algorithm.lower()}/seed{seed}",
+        best_model_save_path=best_dir,
+        log_path=log_dir,
         eval_freq=2000,
         n_eval_episodes=10,
         deterministic=True,
-        verbose=0,
+        verbose=1,
     )
 
     if algorithm == "DQN":
@@ -70,12 +76,20 @@ def train_model(algorithm, seed):
         callback=eval_callback,
     )
 
-    model.save(f"models/{algorithm.lower()}_seed{seed}")
+    final_path = f"{model_dir}/{algorithm.lower()}_seed{seed}"
+    model.save(final_path)
+
+    best_model_path = f"{best_dir}/best_model.zip"
+
+    if os.path.exists(best_model_path):
+        best_model = DQN.load(best_model_path) if algorithm == "DQN" else PPO.load(best_model_path)
+        best_model.save(final_path)
 
     train_env.close()
     eval_env.close()
 
-    print(f"{algorithm} seed {seed} training complete")
+    print(f"{algorithm} seed {seed} saved to {final_path}.zip")
+    print(f"Validation logs saved to {log_dir}")
 
 
 def train():

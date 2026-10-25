@@ -11,7 +11,7 @@ class PrivacyEnv(gym.Env):
         super().__init__()
 
         self.render_mode = render_mode
-        self.max_budget = 100.0
+        self.max_budget = 150.0
         self.max_steps = 50
         self.privacy_weight = 0.2
         self.overdraw_penalty = 50.0
