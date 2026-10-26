@@ -22,7 +22,7 @@ def random_policy(obs, rng=None):
 
 
 def threshold_policy(obs, tau=0.7):
-    urgency, required_resolution, budget_fraction, time_fraction = obs
+    urgency, required_resolution, budget_fraction, time_fraction = obs[:4]
     budget = budget_fraction * 150.0
 
     if required_resolution == 1 and urgency >= tau and budget >= 10.0:
@@ -34,8 +34,7 @@ def threshold_policy(obs, tau=0.7):
     return 2
 
 def pacing_policy(obs, tau=0.7, max_budget=150.0, max_steps=50):
-    urgency, required_resolution, budget_fraction, time_fraction = obs
-    # budget left after reserving a city answer for every remaining step
+    urgency, required_resolution, budget_fraction, time_fraction = obs[:4]    # budget left after reserving a city answer for every remaining step
     slack = budget_fraction * max_budget - 2.0 * round(time_fraction * max_steps)
     if required_resolution == 1 and urgency >= tau and slack >= 8.0:
         return 0

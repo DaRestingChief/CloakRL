@@ -1,7 +1,5 @@
-
 import os
 import random
-
 import numpy as np
 import torch
 from stable_baselines3 import DQN, PPO
@@ -10,9 +8,8 @@ from stable_baselines3.common.monitor import Monitor
 
 from privacy_env import PrivacyEnv
 
-
-SEEDS = [11, 22, 33, 44, 55]
-TOTAL_TIMESTEPS = 30000
+SEEDS = [11,22,33,44,55]
+TOTAL_TIMESTEPS = 100000
 
 
 def train_model(algorithm, seed):
@@ -38,8 +35,8 @@ def train_model(algorithm, seed):
         eval_env,
         best_model_save_path=best_dir,
         log_path=log_dir,
-        eval_freq=2000,
-        n_eval_episodes=10,
+        eval_freq=5000,
+        n_eval_episodes=50,
         deterministic=True,
         verbose=1,
     )
@@ -49,11 +46,11 @@ def train_model(algorithm, seed):
             "MlpPolicy",
             train_env,
             learning_rate=1e-3,
-            buffer_size=10000,
+            buffer_size=50000,
             learning_starts=1000,
             batch_size=64,
-            gamma=0.99,
-            exploration_fraction=0.2,
+            gamma=0.999,
+            exploration_fraction=0.3,
             exploration_final_eps=0.05,
             target_update_interval=500,
             seed=seed,
@@ -64,9 +61,10 @@ def train_model(algorithm, seed):
             "MlpPolicy",
             train_env,
             learning_rate=3e-4,
-            n_steps=2048,
+            n_steps=1024,
             batch_size=64,
-            gamma=0.99,
+            gamma=0.999,
+            ent_coef=0.01,
             seed=seed,
             verbose=0,
         )

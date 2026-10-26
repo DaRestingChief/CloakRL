@@ -21,8 +21,8 @@ class PrivacyEnv(gym.Env):
 
         # Observation: urgency, required resolution, budget fraction, time remaining
         self.observation_space = spaces.Box(
-            low=np.array([0.0, 0.0, 0.0, 0.0], dtype=np.float32),
-            high=np.array([1.0, 1.0, 1.0, 1.0], dtype=np.float32),
+            low=np.array([0.0, 0.0, 0.0, 0.0, -1.0], dtype=np.float32),
+            high=np.array([1.0, 1.0, 1.0, 1.0, 1.0], dtype=np.float32),
             dtype=np.float32,
         )
 
@@ -32,12 +32,17 @@ class PrivacyEnv(gym.Env):
         self.current_required_res = 0
 
     def _get_obs(self):
+        steps_left = self.max_steps - self.current_step
+        # spare budget after reserving a city answer (cost 2) for every remaining step
+        slack = (self.current_budget - 2.0 * steps_left) / self.max_budget
+        slack = float(np.clip(slack, -1.0, 1.0))
         return np.array(
             [
                 self.current_urgency,
                 self.current_required_res,
                 self.current_budget / self.max_budget,
-                (self.max_steps - self.current_step) / self.max_steps,
+                steps_left / self.max_steps,
+                slack,
             ],
             dtype=np.float32,
         )

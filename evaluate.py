@@ -7,9 +7,10 @@ from stable_baselines3 import DQN, PPO
 
 from privacy_env import PrivacyEnv
 from baselines import baselines, random_policy
+from optimal_dp import OptimalPolicy
 
 
-SEEDS = [11, 22, 33, 44, 55]
+SEEDS = [11,22,33,44,55]
 TEST_EPISODES = 100
 TEST_SEED = 90000
 RANDOM_POLICY_SEED = 120000
@@ -115,6 +116,7 @@ def main():
 
         for name, policy in baselines.items():
             evaluate_policy(name, policy, writer)
+            evaluate_policy("Optimal (DP)", OptimalPolicy(), writer)
 
         for algorithm in ["DQN", "PPO"]:
             for seed in SEEDS:

@@ -7,9 +7,9 @@ def test_reset():
     env = PrivacyEnv()
     obs, _ = env.reset(seed=42)
 
-    assert obs.shape == (4,)
+    assert obs.shape == (5,)
     assert env.observation_space.contains(obs)
-    assert env.current_budget == 100.0
+    assert env.current_budget == 150.0      # was 100.0
     assert env.current_step == 0
     print("Reset test passed")
 
