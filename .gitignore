@@ -11,5 +11,3 @@ env/
 
 # Stable Baselines / Logs
 logs/
-models/
-*.zip

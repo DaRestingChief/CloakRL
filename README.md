@@ -30,14 +30,15 @@ CloakRL is a Reinforcement Learning project that models mobile location privacy 
 
 ### Observation Space
 
-The observation is a four-dimensional vector:
+The observation is a five-dimensional vector:
 
-`[app_urgency, required_resolution, budget_fraction, time_fraction]`
+`[app_urgency, required_resolution, budget_fraction, time_fraction, normalised_budget_slack]`
 
 - `app_urgency`: Urgency of the current app request, between 0 and 1.
 - `required_resolution`: Indicates whether the request requires city-level or exact location.
 - `budget_fraction`: Remaining privacy budget divided by the maximum budget.
-- `time_fraction`: Fraction of the episode horizon remaining.
+- `time_fraction`: Fraction of the episode horizon remaining
+- `normalised_budget_slack`: Budget slack is a pre-calculated, normalized "danger gauge" that instantly tells the neural network whether it has surplus budget to spend or is dangerously close to failing the episode.
 
 ### Action Space
 
@@ -51,13 +52,13 @@ The action space is discrete:
 
 The environment assigns service utility based on request urgency, required resolution, and the selected action. For affordable disclosures, the reward is the service utility minus a weighted privacy cost.
 
-The default environment starts with a privacy budget of 100 and uses a maximum episode horizon of 50 requests. Exact-location disclosure costs 10 budget units, while city-level disclosure costs 2. Refusal has no privacy cost.
+The default environment starts with a privacy budget of 150 and uses a maximum episode horizon of 50 requests. Exact-location disclosure costs 10 budget units, while city-level disclosure costs 2. Refusal has no privacy cost.
 
 An unaffordable disclosure triggers a penalty and terminates the episode. Episodes can also terminate when the budget is exhausted or end when the request horizon is reached.
 
 ## Algorithms and Evaluation
 
-CloakRL trains DQN and PPO agents and compares them with the baseline policies. The configured training setup uses five random seeds per algorithm and 30,000 timesteps per run.
+CloakRL trains DQN and PPO agents and compares them with the baseline policies. The configured training setup uses five random seeds per algorithm and 100,000 timesteps per run.
 
 Evaluation results are recorded in `results/evaluation_episodes.csv`. The plotting script generates figures from the available evaluation and training logs.
 
